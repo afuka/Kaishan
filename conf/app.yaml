@@ -1,0 +1,21 @@
+env: dev  # dev 与 prod
+app_name: KaiShan
+secret: dafdjflidafjlad
+mysql:
+  default:
+    name: kaishan
+    user: root
+    password: '11111111'
+    path: 'tcp(127.0.0.1:3306)'
+    config: charset=utf8mb4&parseTime=True&loc=Local
+redis:
+  default:
+    single: true
+    addr: '127.0.0.1:6379'
+    auth: ''
+    db: 0
+https:
+  secret: faklfjalcklajkdac
+  port: ':8088'
+logs:
+  path: ''
