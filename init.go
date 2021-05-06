@@ -17,7 +17,7 @@ func initHandler() {
 	redis.InitRedis() // 初始化redis
 	mysql.InitMysql() // 初始化mysql
 	ice.InitIce() // 初始化id生成器
-	log.InitLogger() // 初始化日志
+	log.InitLogger("output/logs") // 初始化日志
 	httpser.InitHttpSer(quit) // http服务端
 }
 

@@ -29,19 +29,19 @@ func InitHttpSer(quit chan bool){
 	go func() {
 		// service connections
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Err.Errorf("httpser init err, listen: %s", err)
+			log.Error("httpser init err, listen: " + err.Error())
 		}
 	}()
 
 	<-quit
-	log.Info.Infof("httpser Shutdown ...")
+	log.Info("httpser Shutdown ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Err.Errorf("httpser shutdown err : %s", err)
+		log.Error("httpser shutdown err : %s" + err.Error())
 	}
-	log.Info.Infof("httpser exiting ...")
+	log.Info("httpser exiting ...")
 }
 
 // newRouter 路由配置

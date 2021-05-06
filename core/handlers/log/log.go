@@ -4,33 +4,36 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"os"
+	"path"
 )
 
-var (
-	Trace *zap.SugaredLogger // 调试日志
-	Info *zap.SugaredLogger // 公共执行日志
-	Err *zap.SugaredLogger // 错误日志
-)
+var logger *zap.Logger
 
 // InitLogger 初始化日志
-func InitLogger() {
+func InitLogger(dir string) {
+	var coreArr []zapcore.Core
+
+	// Encoder
 	encoder := getEncoder()
 
-	writeSyncerTrace := getLogWriter("./logs/trace.log")
-	writeSyncerInfo := getLogWriter("./logs/info.log")
-	writeSyncerErr := getLogWriter("./logs/err.log")
-	coreTrace := zapcore.NewCore(encoder, writeSyncerTrace, zapcore.DebugLevel)
-	coreInfo := zapcore.NewCore(encoder, writeSyncerInfo, zapcore.InfoLevel)
-	coreErr := zapcore.NewCore(encoder, writeSyncerErr, zapcore.ErrorLevel)
+	//日志级别
+	highPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool{  //error级别
+		return lev >= zap.ErrorLevel
+	})
+	lowPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool {  //info级别
+		return lev < zap.ErrorLevel && lev > zap.DebugLevel
+	})
+	debugPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool {  //debug级别
+		return lev <= zap.DebugLevel
+	})
 
-	logger := zap.New(coreTrace, zap.AddCaller())
-	Trace = logger.Sugar()
+	trace := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(getLogWriter(path.Join(dir, "debug.log")),zapcore.AddSync(os.Stdout)), debugPriority)
+	info := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(getLogWriter(path.Join(dir, "info.log")),zapcore.AddSync(os.Stdout)), lowPriority)
+	err := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(getLogWriter(path.Join(dir, "err.log")),zapcore.AddSync(os.Stdout)), highPriority)
+	coreArr = append(coreArr, trace, info, err)
 
-	logger = zap.New(coreInfo, zap.AddCaller())
-	Info = logger.Sugar()
-
-	logger = zap.New(coreErr, zap.AddCaller())
-	Err = logger.Sugar()
+	logger = zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()) //zap.AddCaller()为显示文件名和行号，可省略
 }
 
 func getEncoder() zapcore.Encoder {
