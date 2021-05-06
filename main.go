@@ -24,8 +24,6 @@ func main(){
 
 	initHandler()
 
-	log.Info("kaishan started")
-
 	// 停止应用
 	ch := make(chan os.Signal)
 	signal.Notify(ch,
@@ -50,7 +48,6 @@ func main(){
 		break
 	}
 
-	log.Info("kaishan closed")
 	closeHandler()
 	remPidFile()
 }

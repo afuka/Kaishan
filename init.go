@@ -12,19 +12,18 @@ import (
 
 // initHandler 初始化
 func initHandler() {
+	log.InitLogger("output/logs") // 初始化日志
 	extra.RegisterFuzzyDecoders() // 滴滴开源的第三方json编码库
 	conf.InitConfig(confPath) // 配置文件初始化
 	redis.InitRedis() // 初始化redis
 	mysql.InitMysql() // 初始化mysql
 	ice.InitIce() // 初始化id生成器
-	log.InitLogger("output/logs") // 初始化日志
-	httpser.InitHttpSer(quit) // http服务端
+	httpser.InitHttpSer() // http服务端
 }
 
-// closeHandler 关闭所有具柄
+// closeHandler 关闭具柄
 func closeHandler()  {
+	httpser.Close()
 	redis.Close()
 	mysql.Close()
-
-	quit <- true // 关闭 http ser
 }

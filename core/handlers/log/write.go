@@ -1,6 +1,8 @@
 package log
 
-import "go.uber.org/zap/zapcore"
+import (
+	"go.uber.org/zap/zapcore"
+)
 
 func Info(msg string, fields ...zapcore.Field) {
 	logger.Info(msg, fields...)

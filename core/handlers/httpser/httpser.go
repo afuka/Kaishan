@@ -12,8 +12,10 @@ import (
 	"time"
 )
 
+var Srv *http.Server
+
 // InitHttpSer 初始化 http server
-func InitHttpSer(quit chan bool){
+func InitHttpSer(){
 
 	gin.SetMode(gin.ReleaseMode)
 	if conf.Viper.GetString("env") == "dev" {
@@ -21,27 +23,27 @@ func InitHttpSer(quit chan bool){
 	}
 
 	r := newRouter()
-	srv := &http.Server{
+	Srv = &http.Server{
 		Addr:    conf.Viper.GetString("https.port"),
 		Handler: r,
 	}
 
 	go func() {
 		// service connections
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Error("httpser init err, listen: " + err.Error())
 		}
 	}()
 
-	<-quit
-	log.Info("httpser Shutdown ...")
+}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// Close 关闭
+func Close()  {
+	ctx, cancel := context.WithTimeout(context.Background(), 20 * time.Second)
 	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Error("httpser shutdown err : %s" + err.Error())
+	if err := Srv.Shutdown(ctx); err != nil {
+		log.Error("httpser shutdown err :" + err.Error())
 	}
-	log.Info("httpser exiting ...")
 }
 
 // newRouter 路由配置
