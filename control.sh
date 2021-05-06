@@ -16,7 +16,7 @@ case $action in
             config="${outfile}/conf/app_dev.yaml"
         fi
         # 启动服务, 以前台方式启动, 否则无法托管
-        exec "${outfile}/bin/${module}" -c="${config}" &
+        exec "${outfile}/bin/${module}" -c="${config}"
         ;;
     "stop" )
         # 停止应用
