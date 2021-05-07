@@ -43,7 +43,7 @@ func main(){
 		case syscall.SIGPIPE:
 			continue
 		default:
-			log.Info("kaishan got a signal")
+			log.Info("kaishan got a signal", log.Field{"sign": sig.String()})
 		}
 		break
 	}
@@ -55,7 +55,7 @@ func main(){
 func setPidFile() {
 	file := path.Join("output/app.pid")
 	pid := os.Getpid()
-	ioutil.WriteFile(file, []byte(fmt.Sprintf("%d\n", pid)), 0644)
+	ioutil.WriteFile(file, []byte(fmt.Sprintf("%d", pid)), 0644)
 }
 
 func remPidFile() {

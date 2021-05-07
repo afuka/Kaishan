@@ -1,17 +1,13 @@
 package log
 
-import (
-	"go.uber.org/zap/zapcore"
-)
-
-func Info(msg string, fields ...zapcore.Field) {
-	logger.Info(msg, fields...)
+func Info(args ...interface{}) {
+	logger.Info(args)
 }
 
-func Debug(msg string, fields ...zapcore.Field) {
-	logger.Debug(msg, fields...)
+func Debug(args ...interface{}) {
+	logger.Debug(args)
 }
 
-func Error(msg string, fields ...zapcore.Field)  {
-	logger.Error(msg, fields...)
+func Error(args ...interface{})  {
+	logger.Error(args)
 }

@@ -8,7 +8,7 @@ import (
 	"path"
 )
 
-var logger *zap.Logger
+var logger *zap.SugaredLogger
 
 // InitLogger 初始化日志
 func InitLogger(dir string) {
@@ -33,7 +33,8 @@ func InitLogger(dir string) {
 	err := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(getLogWriter(path.Join(dir, "err.log")),zapcore.AddSync(os.Stdout)), highPriority)
 	coreArr = append(coreArr, trace, info, err)
 
-	logger = zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()) //zap.AddCaller()为显示文件名和行号，可省略
+	zapHandler := zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()) //zap.AddCaller()为显示文件名和行号，可省略
+	logger = zapHandler.Sugar()
 }
 
 func getEncoder() zapcore.Encoder {
